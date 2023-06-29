@@ -42,7 +42,6 @@ type AuctionPayload = {
 
 type AuctionData = Pick<MatchData, "nounId" | "startTime" | "endTime">;
 const optimismProvider = new ethers.providers.AlchemyProvider("optimism-goerli", env.DEVELOPMENT_ALCHEMY_KEY!);
-
 export const onAuctionCreated = functions
   .runWith({ memory: "512MB", secrets: ["JSON_RPC_URL"] })
   .https.onRequest(async (req, resp) => {
@@ -51,17 +50,19 @@ export const onAuctionCreated = functions
         activity: [{ blockNum }],
       },
     } = req.body as AuctionPayload;
-
     const settlementBlockNumber = parseInt(blockNum);
-    const provider = new ethers.providers.JsonRpcBatchProvider(
+    const provider = new ethers.providers.JsonRpcProvider(
       env.JSON_RPC_URL!,
-      ethers.providers.getNetwork(env.CHAIN_ID === "1" ? "mainnet" : "goerli")
+      ethers.providers.getNetwork(
+        //env.CHAIN_ID === "1" ?
+       "mainnet"
+        //: "goerli"
+        )
     );
 
     const { auctionHouse } =
-       env.CHAIN_ID === "1" ? getMainnetSdk(provider) : getGoerliSdk(provider);
-     // getMainnetSdk(provider);
-
+      //  env.CHAIN_ID === "1" ? getMainnetSdk(provider) : getGoerliSdk(provider);
+      getMainnetSdk(provider);
     const [nounId, , startTime, endTime] = await auctionHouse.auction({
       blockTag: settlementBlockNumber,
     });
@@ -100,8 +101,8 @@ const startNewMatch = async (
   provider: Provider
 ) => {
   const { auctionHouse } =
-  //  getMainnetSdk(provider);
-  env.CHAIN_ID === "1" ? getMainnetSdk(provider) : getGoerliSdk(provider);
+    getMainnetSdk(provider);
+  //env.CHAIN_ID === "1" ? getMainnetSdk(provider) : getGoerliSdk(provider);
   // will need to change these conditions here| 420 chain id of optimism goerli | 10 chain id of optimism mainnet
   const { nomoToken, nomoSeeder } = env.CHAIN_ID === "420" ? getOptimisticGoerliSdk(optimismProvider) : getGoerliSdk(provider);
   const [prevAuctionNounId, , prevAuctionStartTime, prevAuctionEndTime] =
@@ -198,10 +199,10 @@ export const signForMint = functions
   .then((m) => m.val());
   const match = getMatch(matchData);
   // conditionally check depending on node environment
-  let provider: Provider ;
-  if (env.CHAIN_ID === '420') {
+  let provider: Provider;
+  if (env.CHAIN_ID === "420") {
     provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_RPC_URL!);
-  } else  {
+  } else {
     provider = new ethers.providers.JsonRpcProvider(process.env.MAINNET_RPC_URL!);
   }
   // const mainnetProvider = new ethers.providers.JsonRpcProvider(process.env.MAINNET_RPC_URL!);
@@ -237,8 +238,6 @@ export const signForMint = functions
 
         console.log(signer.address);
         console.log("electedBlockHash", electedBlockHash);
-      console.log("domain", domain);
-      console.log("types", types);
       console.log("nounId", nounId);
       console.log("blocknumberHash", blocknumberHash);
       console.log("auctionStartTimestamp", auctionStartTimestamp);
