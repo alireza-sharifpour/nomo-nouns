@@ -67,14 +67,13 @@ export const NomoSaleCard: FC<NomoSaleCardProps> = ({ match, ...props }) => {
   const totalCostString = formatEther(totalCost);
   const hasFundsToMint = !balance || balance.value.gte(totalCost);
   const saleOver = match.status === "Finished";
-
-  console.log({
-        isDisconnected ,
-      hasFundsToMint ,
-      canMint ,
-      isMinting ,
-      saleOver
-  })
+  // console.log({
+  //       isDisconnected ,
+  //     hasFundsToMint ,
+  //     canMint ,
+  //     isMinting ,
+  //     saleOver
+  // })
   return (
     <VStack alignItems={"center"} spacing={0} {...props}>
       <NomoCard

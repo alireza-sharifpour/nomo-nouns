@@ -1,13 +1,12 @@
 import { chain, configureChains, createClient } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
 
 export const getClient = () => {
   const { chains, provider, webSocketProvider } = configureChains(
-    [import.meta.env.DEV ? chain.goerli : chain.mainnet],
+    [import.meta.env.DEV ? chain.optimismGoerli : chain.optimism],
     [
       alchemyProvider({
         apiKey: import.meta.env.VITE_ALCHEMY_APP_KEY,
@@ -27,12 +26,6 @@ export const getClient = () => {
       new CoinbaseWalletConnector({
         chains,
         options: { appName: "Nomo Nouns", headlessMode: true },
-      }),
-      new WalletConnectConnector({
-        chains,
-        options: {
-          qrcode: false,
-        },
       }),
     ],
   });
